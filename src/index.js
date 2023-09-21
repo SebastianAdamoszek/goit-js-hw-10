@@ -1,10 +1,4 @@
-import axios from "axios";
-axios.defaults.headers.common["x-api-key"] = 'api_key=live_HXBK4uyPnCa2bPlC9MHzFcilVSbpGCWYlktY1sR2QHVsfeiZBbNbAYRClzpuleeq';
-
-// Import funkcji fetchBreeds
-import { fetchBreeds } from './cat-api.js';
-import { fetchCatByBreed } from './cat-api.js';
-
+import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const breedSelect = document.querySelector('select.breed-select');
@@ -22,11 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       breedSelect.classList.remove('hidden');
       loader.classList.add('hidden');
+      catInfoDiv.classList.remove('hidden'); // Pokazujemy div.cat-info po zakończeniu ładowania
     }
   }
 
+  // Inicjalizacja stanu ładowania
+  setLoadingState(true);
+
   // Pobierz kolekcję ras i wypełnij select.breed-select opcjami
-  setLoadingState(true); // Włącz stan ładowania
   fetchBreeds()
     .then((breeds) => {
       breeds.forEach((breed) => {
@@ -47,17 +44,33 @@ document.addEventListener('DOMContentLoaded', () => {
   breedSelect.addEventListener('change', () => {
     const selectedBreedId = breedSelect.value;
 
-    setLoadingState(true); // Włącz stan ładowania
+    // Aktualizacja stanu ładowania przy pobieraniu informacji o kocie
+    setLoadingState(true);
+
     fetchCatByBreed(selectedBreedId)
       .then((catData) => {
-        // Wyświetlenie informacji o kocie
-        catInfoDiv.innerHTML = `
-          <img src="${catData.url}" alt="Cat">
-          <p><strong>Rasa:</strong> ${catData.breeds[0].name}</p>
-          <p><strong>Opis:</strong> ${catData.breeds[0].description}</p>
-          <p><strong>Temperament:</strong> ${catData.breeds[0].temperament}</p>
-        `;
-        setLoadingState(false); // Wyłącz stan ładowania po zakończeniu żądania
+        console.log('Odpowiedź od serwera API:', catData);
+
+        // Wyświetlenie informacji o kocie (zdjęcie)
+        if (catData && catData.url) {
+          catInfoDiv.innerHTML = `
+            <img src="${catData.url}" alt="Cat">
+          `;
+        } else {
+          catInfoDiv.innerHTML = '<p>Brak informacji o tym kocie.</p>';
+        }
+
+        // Wyświetlenie informacji o rasie (jeśli dostępne)
+        if (catData && catData.breeds && catData.breeds.length > 0) {
+          catInfoDiv.innerHTML += `
+            <p><strong>Rasa:</strong> ${catData.breeds[0].name}</p>
+            <p><strong>Opis:</strong> ${catData.breeds[0].description}</p>
+            <p><strong>Temperament:</strong> ${catData.breeds[0].temperament}</p>
+          `;
+        }
+
+        // Wyłącz stan ładowania po zakończeniu żądania
+        setLoadingState(false);
       })
       .catch((error) => {
         console.error('Wystąpił błąd podczas pobierania informacji o kocie:', error);
@@ -66,4 +79,3 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 });
-
