@@ -2,8 +2,7 @@
     display: none;
   }
   
-.cat-info {
+.cat-info img {
     width: 400px;
-    height: 200px;
-    background-color: lightgray;
+    height: 300px;
 }

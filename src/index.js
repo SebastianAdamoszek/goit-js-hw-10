@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchCatByBreed(selectedBreedId)
       .then((catData) => {
-        console.log('Odpowiedź od serwera API:', catData);
-
+        
         // Wyświetlenie informacji o kocie (zdjęcie)
         if (catData && catData.url) {
           catInfoDiv.innerHTML = `
@@ -60,14 +59,21 @@ document.addEventListener('DOMContentLoaded', () => {
           catInfoDiv.innerHTML = '<p>Brak informacji o tym kocie.</p>';
         }
 
-        // Wyświetlenie informacji o rasie (jeśli dostępne)
-        if (catData && catData.breeds && catData.breeds.length > 0) {
-          catInfoDiv.innerHTML += `
-            <p><strong>Rasa:</strong> ${catData.breeds[0].name}</p>
-            <p><strong>Opis:</strong> ${catData.breeds[0].description}</p>
-            <p><strong>Temperament:</strong> ${catData.breeds[0].temperament}</p>
-          `;
-        }
+      // Wyświetlenie informacji o rasie (jeśli dostępne)
+if (catData && catData.breeds && catData.breeds.length > 0) {
+  const breed = catData.breeds[0]; // Pobierz obiekt z informacjami o rasie
+
+  catInfoDiv.innerHTML += `
+    <p><strong>Rasa:</strong> ${breed.name}</p>
+    <p><strong>Opis:</strong> ${breed.description}</p>
+    <p><strong>Temperament:</strong> ${breed.temperament}</p>
+  `;
+  
+} else {
+  console.log('Brak informacji o rasie.');
+}
+console.log('Odpowiedź od serwera API:', catData);
+
 
         // Wyłącz stan ładowania po zakończeniu żądania
         setLoadingState(false);
