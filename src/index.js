@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Notiflix
       Report.failure('Oops! Something went wrong!', 
                       'Try reloading the page!',
-                       'Refresh page'
+                       'Click key F5'
       )
       errorElement.classList.remove('hidden'); // Komunikat o błędzie
       setLoadingState(false); // Wyłączeni stanu ładowania
