@@ -1,10 +1,33 @@
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
+import SlimSelect from 'slim-select';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 document.addEventListener('DOMContentLoaded', () => {
+  const breedSelect = new SlimSelect({
+    select: '#breed-list',
+    placeholder: 'Select a breed',
+  });
+
+  // Pobieranie do listy SlimSelect
+  fetchBreeds()
+    .then((breeds) => {
+      const breedOptions = breeds.map((breed) => ({
+        value: breed.value,
+        text: breed.label,
+      }));
+      breedSelect.setData(breedOptions);
+    })
+    .catch((error) => {
+      console.error('An error occurred while retrieving information:', error);
+    });
+
+  });
+  
+document.addEventListener('DOMContentLoaded', () => {
   const breedSelect = document.querySelector('select.breed-select');
-  const loader = document.querySelector('.loader');
+  const loader = document.querySelector('#loader');
   const catInfoDiv = document.querySelector('.cat-info');
-  const errorElement = document.querySelector('.error');
+  const errorElement = document.querySelector('#error');
 
   // Funkcja do aktualizacji stanu ładowania
   function setLoadingState(isLoading) {
@@ -16,14 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       breedSelect.classList.remove('hidden');
       loader.classList.add('hidden');
-      catInfoDiv.classList.remove('hidden'); // Pokazujemy div.cat-info po zakończeniu ładowania
+      catInfoDiv.classList.remove('hidden'); // Pokazujemy div.cat-info
     }
   }
 
   // Inicjalizacja stanu ładowania
   setLoadingState(true);
 
-  // Pobierz kolekcję ras i wypełnij select.breed-select opcjami
+  // Pobieranie i  wypełnianie danych select.breed-select
   fetchBreeds()
     .then((breeds) => {
       breeds.forEach((breed) => {
@@ -32,56 +55,61 @@ document.addEventListener('DOMContentLoaded', () => {
         option.textContent = breed.label;
         breedSelect.appendChild(option);
       });
-      setLoadingState(false); // Wyłącz stan ładowania po zakończeniu żądania
+      setLoadingState(false); // Wyłącz stan ładowania
     })
     .catch((error) => {
-      console.error('Wystąpił błąd podczas pobierania ras:', error);
-      errorElement.classList.remove('hidden'); // Wyświetl komunikat o błędzie
-      setLoadingState(false); // Wyłącz stan ładowania po zakończeniu żądania
+      console.error('An error occurred while retrieving information:', error);
+      // Notiflix
+      Report.failure('Oops! Something went wrong!', 
+                      'Try reloading the page!',
+                       'Refresh page'
+      )
+      errorElement.classList.remove('hidden'); // Komunikat o błędzie
+      setLoadingState(false); // Wyłączeni stanu ładowania
     });
 
   // Obsługa wyboru rasy
   breedSelect.addEventListener('change', () => {
     const selectedBreedId = breedSelect.value;
 
-    // Aktualizacja stanu ładowania przy pobieraniu informacji o kocie
+    // Aktualizacja stanu ładowania 
     setLoadingState(true);
 
     fetchCatByBreed(selectedBreedId)
       .then((catData) => {
         
-        // Wyświetlenie informacji o kocie (zdjęcie)
+        // Wyświetlenie zdjęcia kota
         if (catData && catData.url) {
           catInfoDiv.innerHTML = `
             <img src="${catData.url}" alt="Cat">
           `;
         } else {
-          catInfoDiv.innerHTML = '<p>Brak informacji o tym kocie.</p>';
+          catInfoDiv.innerHTML = '<p>No information about this cat.</p>';
         }
 
-      // Wyświetlenie informacji o rasie (jeśli dostępne)
+      // Wyświetlenie informacji o rasie
 if (catData && catData.breeds && catData.breeds.length > 0) {
   const breed = catData.breeds[0]; // Pobierz obiekt z informacjami o rasie
 
   catInfoDiv.innerHTML += `
-    <p><strong>Rasa:</strong> ${breed.name}</p>
-    <p><strong>Opis:</strong> ${breed.description}</p>
+    <p><strong>Breed:</strong> ${breed.name}</p>
+    <p><strong>Description:</strong> ${breed.description}</p>
     <p><strong>Temperament:</strong> ${breed.temperament}</p>
   `;
   
 } else {
-  console.log('Brak informacji o rasie.');
+  console.log('No information about breed.');
 }
-console.log('Odpowiedź od serwera API:', catData);
+console.log('Reply from the server API:', catData);
 
 
-        // Wyłącz stan ładowania po zakończeniu żądania
+        // Wyłączam stan ładowania
         setLoadingState(false);
       })
       .catch((error) => {
-        console.error('Wystąpił błąd podczas pobierania informacji o kocie:', error);
-        errorElement.classList.remove('hidden'); // Wyświetl komunikat o błędzie
-        setLoadingState(false); // Wyłącz stan ładowania po zakończeniu żądania
+        console.error('An error occurred while retrieving information', error);
+        errorElement.classList.remove('hidden'); // Pokaż komunikat o błędzie
+        setLoadingState(false); // Wyłączam stan ładowania
       });
   });
 });

@@ -13,22 +13,22 @@ export function fetchBreeds() {
         return breeds;
       })
       .catch((error) => {
-        throw error; // Rzucenie błędu w przypadku niepowodzenia żądania
+        throw error; // Wyświetlenie błędu w przypadku niepowodzenia żądania
       });
   }
 
 
 
-// Funkcja do pobierania informacji o kocie na podstawie identyfikatora rasy
+// Funkcja pobierania informacji o kocie w/g identyfikatora rasy
 export function fetchCatByBreed(breedId) {
     return axios.get(`https://api.thecatapi.com/v1/images/search?breed_ids=${breedId}`)
       .then((response) => {
-        // Przetwarzanie odpowiedzi i zwracanie informacji o kocie
+        // Przetwarzanie i zwracanie informacji o kocie
         const catData = response.data[0];
         return catData;
       })
       .catch((error) => {
-        throw error; // Rzucenie błędu w przypadku niepowodzenia żądania
+        throw error; // Wyświetlenie błędu w przypadku niepowodzenia żądania
       });
   }  
   
