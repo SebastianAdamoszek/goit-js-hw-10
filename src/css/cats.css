@@ -1,11 +1,13 @@
 body {
-  background-color: azure;
+  
+  background: linear-gradient(30deg, #94ecd9, #7c69b9, #b175a3);
 }
 .container {
   max-width: 1200px;
   margin: 90px auto;
   border: rgb(74, 134, 172) 8px double;
   padding: 20px;
+  box-shadow: 8px 8px 3px rgba(0, 0, 0, 0.2);
 
 }
 .list {
@@ -23,6 +25,20 @@ body {
     width: 400px;
     height: 300px;
     border: rgb(74, 134, 172) 5px double;
+    box-shadow: 8px 8px 3px rgba(0, 0, 0, 0.2);
+}
+.refresh-btn {
+  margin-left: 55%;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 25px;
+  cursor: pointer;
+}
+.refresh-btn:hover {
+  color: #94ecd9;
+  border: 1px solid #94ecd9;
 }
 
 .loader-container {
@@ -31,10 +47,10 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 30vh;
-  width: 30vh;
+  height: 300px;
+  width: 300px;
   background-color: rgb(74, 134, 172);
-  border-radius: 40%;
+  border-radius: 35%;
 }
 
 
@@ -93,19 +109,20 @@ body {
   }
 }
 .error-text {
-  color: rgb(134, 57, 57);
+  color: rgb(132, 10, 10);
   text-align: center;
   padding: 10px;
 }
 
 .error-container {
-  font-size: 35px;
+  font-size: 30px;
   font-weight: bold;
   letter-spacing: 1px;
   font-family: Arial, Helvetica, sans-serif;
   color: #fff;
   animation: smokeOut 1s ease-in-out infinite alternate;
   text-shadow: 0 0 1px white;
+  padding-top: 15px;
 }
 .error-container:before {
   content: "Use key F5";

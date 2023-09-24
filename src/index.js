@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const loader = document.querySelector('#loader');
   const catInfoDiv = document.querySelector('.cat-info');
   const errorElement = document.querySelector('#error');
+  const refreshBtn = document.querySelector('.refresh-btn');
 
   // Funkcja do aktualizacji stanu ładowania
   function setLoadingState(isLoading) {
@@ -61,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('An error occurred while retrieving information:', error);
       // Notiflix
       Report.failure('Oops! Something went wrong!', 
-                      'Try reloading the page!',
-                       'Click key F5'
+                      'Try reloading the page! Click key F5',
+                       'Close'
       )
       errorElement.classList.remove('hidden'); // Komunikat o błędzie
       setLoadingState(false); // Wyłączeni stanu ładowania
