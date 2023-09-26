@@ -5,7 +5,6 @@ import { Report } from 'notiflix/build/notiflix-report-aio';
 document.addEventListener('DOMContentLoaded', () => {
   const breedSelect = new SlimSelect({
     select: '#breed-list',
-    placeholder: 'Select a breed',
   });
 
   // Pobieranie do listy SlimSelect
@@ -15,20 +14,42 @@ document.addEventListener('DOMContentLoaded', () => {
         value: breed.value,
         text: breed.label,
       }));
+
+      // zaktualizowanie listy SlimSelect
       breedSelect.setData(breedOptions);
     })
     .catch((error) => {
       console.error('An error occurred while retrieving information:', error);
+      Report.failure('Oops! Something went wrong!', 
+          'Try reloading the page! Click key F5',
+           'Close'
+        )
+        errorElement.classList.remove('hidden');
+        setLoadingState(false); // Wyłączam stan ładowania
     });
+});
 
-  });
-  
 document.addEventListener('DOMContentLoaded', () => {
   const breedSelect = document.querySelector('select.breed-select');
   const loader = document.querySelector('#loader');
   const catInfoDiv = document.querySelector('.cat-info');
-  const errorElement = document.querySelector('#error');
-  const refreshBtn = document.querySelector('.refresh-btn');
+  const errorElement = document.querySelector('#error'); // Zmieniony identyfikator
+
+  // Funkcja czyszcząca zawartość elementu DOM
+  function clearElement(element) {
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
+
+  // Funkcja do tworzenia elementu <p> z pogrubionym tekstem i dodawania go do rodzica
+  function addParagraph(parent, text) {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = text;
+    p.appendChild(strong);
+    parent.appendChild(p);
+  }
 
   // Funkcja do aktualizacji stanu ładowania
   function setLoadingState(isLoading) {
@@ -43,10 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
       catInfoDiv.classList.remove('hidden'); // Pokazujemy div.cat-info
     }
   }
-
-  // Inicjalizacja stanu ładowania
-  setLoadingState(true);
-
   // Pobieranie i  wypełnianie danych select.breed-select
   fetchBreeds()
     .then((breeds) => {
@@ -69,6 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
       setLoadingState(false); // Wyłączeni stanu ładowania
     });
 
+  // Inicjalizacja stanu ładowania
+  setLoadingState(true);
+
   // Obsługa wyboru rasy
   breedSelect.addEventListener('change', () => {
     const selectedBreedId = breedSelect.value;
@@ -76,39 +96,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aktualizacja stanu ładowania 
     setLoadingState(true);
 
+    // Wyczyszczenie zawartości div.cat-info
+    clearElement(catInfoDiv);
+
     fetchCatByBreed(selectedBreedId)
       .then((catData) => {
-        
-        // Wyświetlenie zdjęcia kota
         if (catData && catData.url) {
-          catInfoDiv.innerHTML = `
-            <img src="${catData.url}" alt="Cat">
-          `;
+          const catImage = document.createElement('img');
+          catImage.src = catData.url;
+          catImage.alt = 'Cat';
+          catInfoDiv.appendChild(catImage);
         } else {
-          catInfoDiv.innerHTML = '<p>No information about this cat.</p>';
+          catInfoDiv.textContent = 'No information about this cat.';
         }
 
-      // Wyświetlenie informacji o rasie
-if (catData && catData.breeds && catData.breeds.length > 0) {
-  const breed = catData.breeds[0]; // Pobierz obiekt z informacjami o rasie
-
-  catInfoDiv.innerHTML += `
-    <p><strong>Breed:</strong> ${breed.name}</p>
-    <p><strong>Description:</strong> ${breed.description}</p>
-    <p><strong>Temperament:</strong> ${breed.temperament}</p>
-  `;
-  
-} else {
-  console.log('No information about breed.');
-}
-console.log('Reply from the server API:', catData);
-
+        // Wyświetlenie informacji o rasie z pogrubionym tekstem
+        if (catData && catData.breeds && catData.breeds.length > 0) {
+          const breed = catData.breeds[0]; // Pobierz obiekt z informacjami o rasie
+          addParagraph(catInfoDiv, `BREED: ${breed.name}`);
+          addParagraph(catInfoDiv, `DESCRIPTION: ${breed.description}`);
+          addParagraph(catInfoDiv, `TEMPERAMENT: ${breed.temperament}`);
+        }
 
         // Wyłączam stan ładowania
         setLoadingState(false);
       })
       .catch((error) => {
         console.error('An error occurred while retrieving information', error);
+        Report.failure('Oops! Something went wrong!', 
+          'Try reloading the page! Click key F5',
+           'Close'
+        )
         errorElement.classList.remove('hidden'); // Pokaż komunikat o błędzie
         setLoadingState(false); // Wyłączam stan ładowania
       });

@@ -1,7 +1,12 @@
 body {
-  
-  background: linear-gradient(30deg, #94ecd9, #7c69b9, #b175a3);
+    background: linear-gradient(30deg, #94ecd9, #7c69b9, #b175a3);
 }
+
+P {
+   text-align: center;
+   text-shadow: 8px 8px 3px rgba(0, 0, 0, 0.2);;
+  }
+
 .container {
   max-width: 1200px;
   margin: 90px auto;
@@ -21,7 +26,7 @@ body {
   }
   
 .cat-info img {
-  margin-left: 30%;
+  margin-left: 32%;
     width: 400px;
     height: 300px;
     border: rgb(74, 134, 172) 5px double;
@@ -52,7 +57,6 @@ body {
   background-color: rgb(74, 134, 172);
   border-radius: 35%;
 }
-
 
 .loader-animation {
   font-size:48px;
