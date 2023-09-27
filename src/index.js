@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const breedOptions = breeds.map((breed) => ({
         value: breed.value,
         text: breed.label,
+        style: 'color:#1b6162',
       }));
       breedOptions.unshift({
         'text': 'Select a breed',
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const breedSelect = new SlimSelect({
         select: '#breed-list',
         data: breedOptions,
+        
       });
 
       // Uzupełnienie selekta HTML
